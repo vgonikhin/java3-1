@@ -1,8 +1,5 @@
 package geekbrains.java3.lesson1;
 
-import java.lang.reflect.Array;
-import java.util.Collections;
-
 public class Main {
 
     public static void main(String[] args) {
