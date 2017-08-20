@@ -18,7 +18,6 @@ public class Main {
         stmt = connection.createStatement();
 
         initializeTable(10000);
-        //printTable("Products");
         while(true) {
             System.out.println("Enter command: ");
             command = sc.nextLine();
