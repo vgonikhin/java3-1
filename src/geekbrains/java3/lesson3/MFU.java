@@ -1,6 +1,9 @@
 package geekbrains.java3.lesson3;
 
 public class MFU {
+    Object printLock = new Object();
+    Object scanLock = new Object();
+
     int pcnt = 1;
     int scnt = 1;
 
@@ -35,21 +38,25 @@ public class MFU {
 
     }
 
-    public synchronized void print(){
-        try {
-            Thread.sleep(50);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+    public void print(){
+        synchronized (printLock) {
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            System.out.println("printing page " + (pcnt++));
         }
-        System.out.println("printing page "+(pcnt++));
     }
 
-    public synchronized void scan(){
-        try {
-            Thread.sleep(50);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+    public void scan(){
+        synchronized (scanLock) {
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            System.out.println("scanning page " + (scnt++));
         }
-        System.out.println("scanning page "+(scnt++));
     }
 }
