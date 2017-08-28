@@ -7,6 +7,7 @@ public class Main {
     private static Connection connection;
     private static Statement stmt;
     private static PreparedStatement psi;
+    private static PreparedStatement psu;
     private static Scanner sc;
 
     public static void main(String[] args) throws Exception {
@@ -18,6 +19,19 @@ public class Main {
         stmt = connection.createStatement();
 
         initializeTable(10000);
+
+        connection.setAutoCommit(false);
+        psu = connection.prepareStatement("UPDATE Products SET cost = 123 WHERE title = ?");
+        for (int i = 1; i <= 10000; i++) {
+            psu.setString(1,"product" + i);
+            //psu.executeUpdate();
+            System.out.println("product"+i+" updated");
+            psu.addBatch();
+        }
+        psu.executeBatch();
+        connection.setAutoCommit(true);
+        printTable("Products");
+
         while(true) {
             System.out.println("Enter command: ");
             command = sc.nextLine();
