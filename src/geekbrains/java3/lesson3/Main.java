@@ -4,18 +4,28 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Scanner;
+import java.util.concurrent.CountDownLatch;
+
 
 public class Main{
-    public static void main (String[] args) throws Exception {
-        FileOutputStream fos = new FileOutputStream("result.txt");
+    public static void main (String[] args) {
+        FileOutputStream fos = null;
+        try {
+            fos = new FileOutputStream("result.txt");
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        CountDownLatch cdnl = new CountDownLatch(15);
 
+        FileOutputStream finalFos = fos;
         Thread tA = new Thread(new Runnable() {
             @Override
             public void run() {
                 for (int i = 0; i < 5; i++) {
                     try {
-                        fos.write(65);
+                        finalFos.write(65);
                         Thread.sleep(20);
+                        cdnl.countDown();
                     } catch (IOException e) {
                         e.printStackTrace();
                     } catch (InterruptedException e) {
@@ -29,8 +39,9 @@ public class Main{
             public void run() {
                 for (int i = 0; i < 5; i++) {
                     try {
-                        fos.write(66);
+                        finalFos.write(66);
                         Thread.sleep(20);
+                        cdnl.countDown();
                     } catch (IOException e) {
                         e.printStackTrace();
                     } catch (InterruptedException e) {
@@ -44,8 +55,9 @@ public class Main{
             public void run() {
                 for (int i = 0; i < 5; i++) {
                     try {
-                        fos.write(67);
+                        finalFos.write(67);
                         Thread.sleep(20);
+                        cdnl.countDown();
                     } catch (IOException e) {
                         e.printStackTrace();
                     } catch (InterruptedException e) {
@@ -56,13 +68,20 @@ public class Main{
         });
 
         tA.start();
-        tA.join();
         tB.start();
-        tB.join();
         tC.start();
-        tC.join();
-        System.out.println("Done");
-        fos.close();
+
+        try {
+            cdnl.await();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        try {
+            fos.close();
+            finalFos.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
 
